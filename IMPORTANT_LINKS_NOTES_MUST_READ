@@ -6,3 +6,52 @@ Important Points --
 On most systems, passwords are stored as hashes—the hash is generated in most cases using a well-known cryptographic hash function which maps the input data sequence of any length into a finite data sequence. The cryptographic hash function is irreversible meaning that the input sequence cannot be rebuilt from the hash.
 The problem is that the hashes generated are not necessarily unique for each input sequence—two different input sequences may have (depending on the hash function) the same hash and it is this weakness that the hackers target. The actual password cracking process is effectively finding an input sequence that has the same hash as the target password. To crack the password, the hackers use automated tools and to speed up the search, hackers will also use dictionaries and hash tables.
 Most people will invariably set their password based on something meaningful and thus words (and their variations) are prime candidates to be tried. Hash tables help significantly when the hacker has obtained a list of hashes and is dealing with "unsalted" passwords as the processing associated with generating the hashes has already been done. Some operating systems such as MS Windows use "unsalted" passwords and thus hash tables can be used. Other operating systems such as Linux try to make the process of password cracking more time consuming by adding another string called a "salt" to the password before generating the hash. For example, if the unsalted password is LuzernGenevaBaselZurich then that phrase would be converted via a hash function. However, if the password is salted, then a "salt" string is added to the start or end of the password and then the hashing is carried out. So if the salt is 18967802 then the computer stores the password as the hash of 18967802LuzernGenevaBaselZurich. The benefit of using a "salt" is that it renders hash tables useless and makes the guessing process a lot more time consuming and difficult for hackers.
+
+
+2021-12-07 
+
+Very good discussion on sudo and sudo vs su --
+https://www.redhat.com/sysadmin/difference-between-sudo-su
+https://www.redhat.com/sysadmin/sysadmins-dont-sudo 
+
+Import excerpt from the above link https://www.redhat.com/sysadmin/sysadmins-dont-sudo follows --
+
+Bypass sudo
+
+Distributions that work like this usually lock the password for the root user (Ubuntu is one of these distros). This way no one can login as root and start working unencumbered. Let’s look at how this works and then how to bypass it.
+
+Let me stipulate the setup here so that you can reproduce it if you wish. As an example, I installed Ubuntu 16.04 LTS1 in a VM using VirtualBox. During the installation, I created a non-root user, student, with a simple password for this experiment.
+
+Login as the user student and open a terminal session. Let’s look at the entry for root in the /etc/shadow file, which is where the encrypted passwords are stored.
+
+student@machine1:~$ cat /etc/shadow
+cat: /etc/shadow: Permission denied
+Permission is denied so we cannot look at the /etc/shadow file. This is common to all distributions so that non-privileged users cannot see and access the encrypted passwords. That access would make it possible to use common hacking tools to crack those passwords so it is insecure to allow that.
+
+Now let’s try to su – to root.
+
+student@machine1:~$ su -
+Password:
+su: Authentication failure
+This attempt to use the su command to elevate our user to root privilege fails because the root account has no password and is locked out. Let’s use sudo to look at the /etc/shadow file.
+
+student@machine1:~$ sudo cat /etc/shadow
+[sudo] password for student: <enter the user password>
+root:!:17595:0:99999:7:::
+<snip>
+student:$6$tUB/y2dt$A5ML1UEdcL4tsGMiq3KOwfMkbtk3WecMroKN/:17597:0:99999:7:::
+<snip>
+I have truncated the results to only show the entry for the root and student users. I have also shortened the encrypted password so that the entry will fit on a single line. The fields are separated by colons (:) and the second field is the password. Notice that the password field for root is a “bang,” known to the rest of the world as an exclamation point (!). This indicates that the account is locked and that it cannot be used.
+
+Now, all we need to do to use the root account as proper sysadmins is to set up a password for the root account.
+
+student@machine1:~$ sudo su -
+[sudo] password for student: <Enter password for student>
+root@machine1:~# passwd root
+Enter new UNIX password: <Enter new root password>
+Retype new UNIX password: <Re-enter new root password>
+passwd: password updated successfully
+root@machine1:~#
+Now we can login directly on a console as root or su – directly to root instead of having to use sudo for each command. Of course, we could just use sudo su – every time we want to login as root – but why bother?
+
+Please do not misunderstand me. Distributions like Ubuntu and their up- and down-stream relatives are perfectly fine and I have used several of them over the years. When using Ubuntu and related distros, one of the first things I do is set a root password so that I can login directly as root.
