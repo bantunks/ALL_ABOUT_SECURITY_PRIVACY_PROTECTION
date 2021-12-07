@@ -1,21 +1,45 @@
+*****************************************************************************************************************************************************************
+*****************************************************************************************************************************************************************
 Essential Reading on Data Masking concepts from Microfocus, includes series of topics --
 https://content.microfocus.com/privacy-data-masking-tb
+*****************************************************************************************************************************************************************
+*****************************************************************************************************************************************************************
 
+
+*****************************************************************************************************************************************************************
+*****************************************************************************************************************************************************************
 Salted vs Unsalted Passwords from https://phys.org/news/2016-03-passwords.html --
 Important Points --
 On most systems, passwords are stored as hashes—the hash is generated in most cases using a well-known cryptographic hash function which maps the input data sequence of any length into a finite data sequence. The cryptographic hash function is irreversible meaning that the input sequence cannot be rebuilt from the hash.
 The problem is that the hashes generated are not necessarily unique for each input sequence—two different input sequences may have (depending on the hash function) the same hash and it is this weakness that the hackers target. The actual password cracking process is effectively finding an input sequence that has the same hash as the target password. To crack the password, the hackers use automated tools and to speed up the search, hackers will also use dictionaries and hash tables.
 Most people will invariably set their password based on something meaningful and thus words (and their variations) are prime candidates to be tried. Hash tables help significantly when the hacker has obtained a list of hashes and is dealing with "unsalted" passwords as the processing associated with generating the hashes has already been done. Some operating systems such as MS Windows use "unsalted" passwords and thus hash tables can be used. Other operating systems such as Linux try to make the process of password cracking more time consuming by adding another string called a "salt" to the password before generating the hash. For example, if the unsalted password is LuzernGenevaBaselZurich then that phrase would be converted via a hash function. However, if the password is salted, then a "salt" string is added to the start or end of the password and then the hashing is carried out. So if the salt is 18967802 then the computer stores the password as the hash of 18967802LuzernGenevaBaselZurich. The benefit of using a "salt" is that it renders hash tables useless and makes the guessing process a lot more time consuming and difficult for hackers.
+*****************************************************************************************************************************************************************
+*****************************************************************************************************************************************************************
 
 
+*****************************************************************************************************************************************************************
+*****************************************************************************************************************************************************************
 2021-12-07 
 
 Very good discussion on sudo and sudo vs su --
 https://www.redhat.com/sysadmin/difference-between-sudo-su
 https://www.redhat.com/sysadmin/sysadmins-dont-sudo 
 
-Import excerpt from the above link https://www.redhat.com/sysadmin/sysadmins-dont-sudo follows --
+Import excerpt from the link https://www.redhat.com/sysadmin/difference-between-sudo-su --
+*****************************************************************************************************************************************************************
+Recapping what you've learned.
 
+sudo lets you issue commands as another user without changing your identity
+You need to have an entry in /etc/sudoers to execute these restricted permissions
+sudo -i brings you to an interactive session as root
+su means to switch to a particular user
+Just typing su switches to the root user
+sudo will ask for your password, while su will ask for the password for the user whom you are switching to
+*****************************************************************************************************************************************************************
+
+Import excerpt from the link https://www.redhat.com/sysadmin/sysadmins-dont-sudo follows --
+
+*****************************************************************************************************************************************************************
 Bypass sudo
 
 Distributions that work like this usually lock the password for the root user (Ubuntu is one of these distros). This way no one can login as root and start working unencumbered. Let’s look at how this works and then how to bypass it.
@@ -55,3 +79,5 @@ root@machine1:~#
 Now we can login directly on a console as root or su – directly to root instead of having to use sudo for each command. Of course, we could just use sudo su – every time we want to login as root – but why bother?
 
 Please do not misunderstand me. Distributions like Ubuntu and their up- and down-stream relatives are perfectly fine and I have used several of them over the years. When using Ubuntu and related distros, one of the first things I do is set a root password so that I can login directly as root.
+*****************************************************************************************************************************************************************
+*****************************************************************************************************************************************************************
